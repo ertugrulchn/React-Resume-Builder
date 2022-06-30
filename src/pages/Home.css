@@ -1,0 +1,36 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100vh;
+  margin: 0 140px;
+}
+
+.hero_texts h1 {
+  font-size: 55px;
+  line-height: 1;
+  margin-bottom: 30px;
+}
+
+.hero_texts p {
+  font-size: 20px;
+  width: 80%;
+  margin-bottom: 30px;
+}
+
+.hero_texts a {
+  padding: 20px 30px;
+  margin-top: 50px;
+  border-radius: 15px;
+  text-decoration: none;
+  color: #fff;
+  background-color: #6c63ff;
+  font-size: 20px;
+}
