@@ -466,8 +466,8 @@ function ResumeBuilder() {
                 targetRef={ref}
                 filename={`${getFileName("pdf")}`}
                 x={-5}
-                y={-24}
-                scale={0.7}
+                y={-13}
+                scale={0.55}
               >
                 {({ toPdf }: any) => (
                   <Button
