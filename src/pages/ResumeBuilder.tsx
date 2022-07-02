@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   Button,
   Flex,
@@ -8,6 +8,7 @@ import {
   GridItem,
   Heading,
   Input,
+  Textarea,
   useToast,
 } from "@chakra-ui/react";
 import { Step, Steps, useSteps } from "chakra-ui-steps";
@@ -15,6 +16,7 @@ import "./ResumeBuilder.css";
 import { toPng } from "html-to-image";
 import Pdf from "react-to-pdf";
 import { format } from "date-fns";
+import SKILLI from "../interfaces/SkillIntarface";
 
 function ResumeBuilder() {
   const [firstName, setFirstName] = useState<string>("Your Name");
@@ -25,8 +27,10 @@ function ResumeBuilder() {
   const [postalCode, setPostalCode] = useState<string>("Postal Code");
   const [phone, setPhone] = useState<string>("Phone");
   const [email, setEmail] = useState<string>("Email");
+  const [about, setAbout] = useState<string>("About");
+  const [skills, setSkills] = useState<SKILLI[]>([]);
 
-  const steps: any[] = [{ label: "" }, { label: "" }];
+  const steps: any[] = [{ label: "" }, { label: "" }, { label: "" }];
   const { nextStep, prevStep, reset, activeStep }: any = useSteps({
     initialStep: 0,
   });
@@ -93,11 +97,40 @@ function ResumeBuilder() {
     setEmail(e.target.value);
   };
 
+  const onChangeAb = (e: any) => {
+    setAbout(e.target.value);
+  };
+
+  const handleKeyDown = (e: any) => {
+    if (e.key !== "Enter") return;
+    const value = e.target.value;
+    if (!value.trim()) return;
+    addSkill(value);
+    e.target.value = "";
+  };
+
+  // SKILL PROCESS
+  const addSkill = (title: any) => {
+    const data: SKILLI = {
+      id: skills.length > 0 ? skills[skills.length - 1].id + 1 : 1,
+      title: title,
+    };
+    setSkills((prevSkill) => [...prevSkill, data]);
+  };
+
+  const deleteSkill = (id: number) => {
+    const deleteSkills: SKILLI[] = skills.filter(
+      (skill: SKILLI): any => skill.id !== id
+    );
+
+    setSkills(deleteSkills);
+  };
+
   return (
     <div style={{ margin: 30 }}>
       <Flex flexDir="column" width="100%">
         <Steps activeStep={activeStep}>
-          <Step label="User Datas">
+          <Step label="User Information">
             <Grid templateColumns="repeat(2, 1fr)" gap={10} marginBottom={8}>
               <GridItem w="100%">
                 <FormControl>
@@ -219,6 +252,43 @@ function ResumeBuilder() {
               </GridItem>
             </Grid>
           </Step>
+          <Step label="User About">
+            <FormControl marginBottom={8}>
+              <FormLabel htmlFor="profession" fontSize={12}>
+                Profession
+              </FormLabel>
+              <Textarea
+                id="profession"
+                placeholder="e.g. I've been a software developer for 10 years."
+                borderRadius={0}
+                onChange={(c) => onChangeAb(c)}
+                maxLength={1500}
+              />
+            </FormControl>
+            <div className="tags-input-container">
+              <>
+                {skills.map((skill) => {
+                  return (
+                    <div className="tag-item" key={skill.id}>
+                      <span className="text">{skill.title}</span>
+                      <span
+                        className="close"
+                        onClick={() => deleteSkill(skill.id)}
+                      >
+                        &times;
+                      </span>
+                    </div>
+                  );
+                })}
+              </>
+              <input
+                onKeyDown={handleKeyDown}
+                type="text"
+                className="tags-input"
+                placeholder="Add Skill e.g. Web Design"
+              />
+            </div>
+          </Step>
           <Step label="Preview">
             <div id="doc2" className="yui-t7" ref={ref}>
               <div id="inner">
@@ -248,12 +318,7 @@ function ResumeBuilder() {
                           <h2>About</h2>
                         </div>
                         <div className="yui-u">
-                          <p className="enlarge">
-                            Progressively evolve cross-platform ideas before
-                            impactful infomediaries. Energistically visualize
-                            tactical initiatives before cross-media catalysts
-                            for change.
-                          </p>
+                          <p className="enlarge">{about}</p>
                         </div>
                       </div>
                       <div className="yui-gf">
@@ -261,30 +326,15 @@ function ResumeBuilder() {
                           <h2>Skills</h2>
                         </div>
                         <div className="yui-u">
-                          <div className="talent">
-                            <h2>Web Design</h2>
-                            <p>
-                              Assertively exploit wireless initiatives rather
-                              than synergistic core competencies.
-                            </p>
-                          </div>
-
-                          <div className="talent">
-                            <h2>Interface Design</h2>
-                            <p>
-                              Credibly streamline mission-critical value with
-                              multifunctional functionalities.
-                            </p>
-                          </div>
-
-                          <div className="talent">
-                            <h2>Project Direction</h2>
-                            <p>
-                              Proven ability to lead and manage a wide variety
-                              of design and development projects in team and
-                              independent situations.
-                            </p>
-                          </div>
+                          <>
+                            {skills.map((skill) => {
+                              return (
+                                <div className="talent" key={skill.title}>
+                                  <h2>{skill.title}</h2>
+                                </div>
+                              );
+                            })}
+                          </>
                         </div>
                       </div>
 
